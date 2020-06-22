@@ -948,7 +948,9 @@ namespace TableauCri.Services
                 if (connection.Type.EqualsIgnoreCase(TableauApiService.CONNECTION_TYPE_SQLPROXY))
                 {
                     // published/proxy connection
-                    if (!connection.ServerAddress.EqualsIgnoreCase(sourceServer))
+                    if (!String.IsNullOrWhiteSpace(connection.ServerAddress) &&
+                        !connection.ServerAddress.EqualsIgnoreCase(sourceServer) &&
+                        !connection.ServerAddress.EqualsIgnoreCase("localhost"))
                     {
                         throw new Exception($"Unexpected source connection server address: {connection.ServerAddress}");
                     }
@@ -1062,6 +1064,14 @@ namespace TableauCri.Services
                 UpdateWorkbookPublishedDatasourceConnections(
                     Encoding.UTF8.GetString(workbookBytes.Bytes),
                     sourceServer,
+                    destServer
+                )
+            );
+
+            workbookBytes.Bytes = Encoding.UTF8.GetBytes(
+                UpdateWorkbookPublishedDatasourceConnections(
+                    Encoding.UTF8.GetString(workbookBytes.Bytes),
+                    "localhost",
                     destServer
                 )
             );
